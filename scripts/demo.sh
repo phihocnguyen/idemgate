@@ -22,10 +22,11 @@ R2=$(curl -sf -X POST "$API/v1/operations/claim" \
 echo "$R2"
 
 OP=$(echo "$R1" | sed -n 's/.*"operationId":"\([^"]*\)".*/\1/p')
+TOKEN=$(echo "$R1" | sed -n 's/.*"ownerToken":"\([^"]*\)".*/\1/p')
 echo "== Complete $OP =="
 curl -sf -X POST "$API/v1/operations/$OP/complete" \
   -H "Content-Type: application/json" -H "X-Api-Key: $KEY" \
-  -d '{"status":"COMPLETED","responseStatus":200,"responseBody":"{\"ok\":true}"}'
+  -d "{\"status\":\"COMPLETED\",\"responseStatus\":200,\"responseBody\":\"{\\\"ok\\\":true}\",\"ownerToken\":\"$TOKEN\"}"
 echo
 
 echo "== Replay after complete =="
@@ -40,8 +41,9 @@ R3=$(curl -sf -X POST "$API/v1/operations/claim" \
   -d "{\"scope\":\"demo\",\"key\":\"script-crash\",\"fingerprint\":\"$FP\"}")
 echo "$R3"
 OP3=$(echo "$R3" | sed -n 's/.*"operationId":"\([^"]*\)".*/\1/p')
+TOKEN3=$(echo "$R3" | sed -n 's/.*"ownerToken":"\([^"]*\)".*/\1/p')
 curl -sf -X POST "$API/v1/operations/$OP3/complete" \
   -H "Content-Type: application/json" -H "X-Api-Key: $KEY" \
-  -d '{"status":"UNKNOWN","responseStatus":500,"responseBody":"{\"reason\":\"crash\"}"}'
+  -d "{\"status\":\"UNKNOWN\",\"responseStatus\":500,\"responseBody\":\"{\\\"reason\\\":\\\"crash\\\"}\",\"ownerToken\":\"$TOKEN3\"}"
 echo
 echo "Demo finished."

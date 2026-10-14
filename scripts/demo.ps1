@@ -14,14 +14,13 @@ $r1 = Invoke-RestMethod -Method Post -Uri "$API/v1/operations/claim" -Headers $h
 $r1 | ConvertTo-Json -Compress
 
 Write-Host "== Double-click: second claim =="
-$r2 = Invoke-RestMethod -Method Post -Uri "$API/v1/operations/claim" -Headers $headers -Body (@{
+Invoke-RestMethod -Method Post -Uri "$API/v1/operations/claim" -Headers $headers -Body (@{
   scope = "demo"; key = "script-double"; fingerprint = $FP; ttlSeconds = 300
-} | ConvertTo-Json)
-$r2 | ConvertTo-Json -Compress
+} | ConvertTo-Json) | ConvertTo-Json -Compress
 
 Write-Host "== Complete $($r1.operationId) =="
 Invoke-RestMethod -Method Post -Uri "$API/v1/operations/$($r1.operationId)/complete" -Headers $headers -Body (@{
-  status = "COMPLETED"; responseStatus = 200; responseBody = '{"ok":true}'
+  status = "COMPLETED"; responseStatus = 200; responseBody = '{"ok":true}'; ownerToken = $r1.ownerToken
 } | ConvertTo-Json) | ConvertTo-Json -Compress
 
 Write-Host "== Replay after complete =="
@@ -34,7 +33,7 @@ $r3 = Invoke-RestMethod -Method Post -Uri "$API/v1/operations/claim" -Headers $h
   scope = "demo"; key = "script-crash"; fingerprint = $FP
 } | ConvertTo-Json)
 Invoke-RestMethod -Method Post -Uri "$API/v1/operations/$($r3.operationId)/complete" -Headers $headers -Body (@{
-  status = "UNKNOWN"; responseStatus = 500; responseBody = '{"reason":"crash"}'
+  status = "UNKNOWN"; responseStatus = 500; responseBody = '{"reason":"crash"}'; ownerToken = $r3.ownerToken
 } | ConvertTo-Json) | ConvertTo-Json -Compress
 
 Write-Host "Demo finished."
