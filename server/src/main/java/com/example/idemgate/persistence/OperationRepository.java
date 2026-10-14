@@ -166,6 +166,93 @@ public class OperationRepository {
 				.list();
 	}
 
+	public List<Operation> search(OperationSearchQuery q) {
+		StringBuilder sql = new StringBuilder("SELECT * FROM operations WHERE 1=1");
+		appendSearchFilters(sql, q);
+		sql.append(" ORDER BY created_at DESC LIMIT :limit OFFSET :offset");
+		return bindSearch(jdbc.sql(sql.toString()), q)
+				.param("limit", q.limit())
+				.param("offset", q.offset())
+				.query(this::mapRow)
+				.list();
+	}
+
+	public long countSearch(OperationSearchQuery q) {
+		StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM operations WHERE 1=1");
+		appendSearchFilters(sql, q);
+		Long count = bindSearch(jdbc.sql(sql.toString()), q).query(Long.class).single();
+		return count == null ? 0L : count;
+	}
+
+	private static void appendSearchFilters(StringBuilder sql, OperationSearchQuery q) {
+		if (q.status() != null) {
+			sql.append(" AND status = :status");
+		}
+		if (q.scope() != null && !q.scope().isBlank()) {
+			sql.append(" AND scope = :scope");
+		}
+		if (q.key() != null && !q.key().isBlank()) {
+			sql.append(" AND idempotency_key = :key");
+		}
+		if (q.businessKey() != null && !q.businessKey().isBlank()) {
+			sql.append(" AND business_key = :businessKey");
+		}
+		if (q.q() != null && !q.q().isBlank()) {
+			sql.append("""
+					 AND (
+					   idempotency_key ILIKE :qLike
+					   OR COALESCE(request_path, '') ILIKE :qLike
+					   OR CAST(id AS text) ILIKE :qLike
+					   OR COALESCE(business_key, '') ILIKE :qLike
+					 )
+					""");
+		}
+		if (q.operationId() != null) {
+			sql.append(" AND id = :operationId");
+		}
+		if (q.from() != null) {
+			sql.append(" AND created_at >= :fromTs");
+		}
+		if (q.to() != null) {
+			sql.append(" AND created_at <= :toTs");
+		}
+	}
+
+	private static org.springframework.jdbc.core.simple.JdbcClient.StatementSpec bindSearch(
+			org.springframework.jdbc.core.simple.JdbcClient.StatementSpec spec, OperationSearchQuery q) {
+		if (q.status() != null) {
+			spec = spec.param("status", q.status().name());
+		}
+		if (q.scope() != null && !q.scope().isBlank()) {
+			spec = spec.param("scope", q.scope());
+		}
+		if (q.key() != null && !q.key().isBlank()) {
+			spec = spec.param("key", q.key());
+		}
+		if (q.businessKey() != null && !q.businessKey().isBlank()) {
+			spec = spec.param("businessKey", q.businessKey());
+		}
+		if (q.q() != null && !q.q().isBlank()) {
+			spec = spec.param("qLike", "%" + q.q().trim() + "%");
+		}
+		if (q.operationId() != null) {
+			spec = spec.param("operationId", q.operationId());
+		}
+		if (q.from() != null) {
+			spec = spec.param("fromTs", Timestamp.from(q.from()));
+		}
+		if (q.to() != null) {
+			spec = spec.param("toTs", Timestamp.from(q.to()));
+		}
+		return spec;
+	}
+
+	public List<String> listDistinctScopes() {
+		return jdbc.sql("SELECT DISTINCT scope FROM operations ORDER BY scope")
+				.query(String.class)
+				.list();
+	}
+
 	public int deleteExpired(Instant now) {
 		return jdbc.sql("DELETE FROM operations WHERE retain_until < :now")
 				.param("now", Timestamp.from(now))

@@ -12,6 +12,8 @@ public class IdemgateProperties {
 	private int retentionDays = 7;
 	private int maxResponseBodyBytes = 65_536;
 	private long cleanupIntervalMs = 60_000L;
+	/** When false (default), admin APIs omit response body content. */
+	private boolean exposeResponseBody = false;
 
 	public String getApiKey() {
 		return apiKey;
@@ -59,5 +61,13 @@ public class IdemgateProperties {
 
 	public void setCleanupIntervalMs(long cleanupIntervalMs) {
 		this.cleanupIntervalMs = cleanupIntervalMs;
+	}
+
+	public boolean isExposeResponseBody() {
+		return exposeResponseBody;
+	}
+
+	public void setExposeResponseBody(boolean exposeResponseBody) {
+		this.exposeResponseBody = exposeResponseBody;
 	}
 }
