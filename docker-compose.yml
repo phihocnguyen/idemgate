@@ -1,0 +1,32 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: idemgate
+      POSTGRES_USER: idemgate
+      POSTGRES_PASSWORD: idemgate
+    ports:
+      - "5432:5432"
+    volumes:
+      - idemgate_pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U idemgate -d idemgate"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  idemgate:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/idemgate
+      SPRING_DATASOURCE_USERNAME: idemgate
+      SPRING_DATASOURCE_PASSWORD: idemgate
+      IDEMGATE_API_KEY: ${IDEMGATE_API_KEY:-dev-secret-change-me}
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  idemgate_pg:
