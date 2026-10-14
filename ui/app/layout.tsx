@@ -17,17 +17,14 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: {
-    default: "IdemGate",
-    template: "%s · IdemGate",
-  },
-  description: "PostgreSQL-backed idempotency registry for safe retries",
+  title: "IdemGate",
+  description: "Interactive IdemGate claim / replay bench",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${inter.variable} ${geistMono.variable}`}>
-      <body>{children}</body>
+      <body className="min-h-screen bg-canvas text-ink antialiased">{children}</body>
     </html>
   );
 }
