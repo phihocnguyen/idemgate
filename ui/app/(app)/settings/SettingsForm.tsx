@@ -5,8 +5,8 @@ import type { AdminSettings } from "@/lib/api";
 import { patchSettings } from "@/lib/api";
 
 const field =
-  "rounded-lg border border-app-line bg-[#10161e] px-2.5 py-2 text-app-text outline-none focus:border-app-accent";
-const labelCls = "flex flex-col gap-1.5 text-xs text-app-muted";
+  "rounded-sm border border-hairline bg-canvas-soft px-4 py-3 text-body-md text-ink outline-none focus:border-white/40";
+const labelCls = "flex flex-col gap-2 text-caption-mono-sm text-mute";
 
 export function SettingsForm({ initial }: { initial: AdminSettings }) {
   const [form, setForm] = useState(initial);
@@ -38,10 +38,10 @@ export function SettingsForm({ initial }: { initial: AdminSettings }) {
 
   return (
     <form
-      className="mt-4 max-w-lg rounded-xl border border-app-line bg-app-panel/90 p-4"
+      className="mt-6 max-w-lg rounded-sm border border-hairline bg-canvas-card p-6"
       onSubmit={onSubmit}
     >
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-x-5">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <label className={labelCls}>
           Retention days
           <input
@@ -84,7 +84,7 @@ export function SettingsForm({ initial }: { initial: AdminSettings }) {
         </label>
       </div>
 
-      <label className="mt-4 flex flex-row items-center gap-2 text-sm text-app-muted">
+      <label className="mt-6 flex flex-row items-center gap-2 text-body-sm text-body">
         <input
           type="checkbox"
           checked={form.exposeResponseBody}
@@ -93,23 +93,23 @@ export function SettingsForm({ initial }: { initial: AdminSettings }) {
         Expose response body in admin API
       </label>
 
-      <div className="mt-4">
-        <div className="mb-1 text-app-muted">Known scopes</div>
-        <div className="font-mono text-sm">
+      <div className="mt-6">
+        <div className="text-caption-mono-sm text-mute">Known scopes</div>
+        <div className="mt-1 font-mono text-body-sm text-ink">
           {form.scopes.length ? form.scopes.join(", ") : "(none yet)"}
         </div>
       </div>
 
-      <div className="mt-5 flex items-center gap-3">
+      <div className="mt-8 flex items-center gap-3">
         <button
           type="submit"
           disabled={saving}
-          className="cursor-pointer rounded-lg border-transparent bg-app-accent px-3 py-2 font-semibold text-[#041018] disabled:opacity-60"
+          className="min-h-11 cursor-pointer rounded-pill border border-primary bg-primary px-3 py-1 text-button-md text-on-primary disabled:opacity-60"
         >
           {saving ? "Saving…" : "Save"}
         </button>
-        {msg && <span className="text-app-muted">{msg}</span>}
-        {err && <span className="text-app-bad">{err}</span>}
+        {msg && <span className="text-body-sm text-mute">{msg}</span>}
+        {err && <span className="text-body-sm text-accent-sunset">{err}</span>}
       </div>
     </form>
   );

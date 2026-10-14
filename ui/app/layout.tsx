@@ -1,24 +1,19 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Mono, Source_Sans_3, Syne } from "next/font/google";
+import { Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
 
-const syne = Syne({
+const inter = Inter({
   subsets: ["latin"],
-  variable: "--font-syne",
+  variable: "--font-inter",
   display: "swap",
+  weight: "400",
 });
 
-const sourceSans = Source_Sans_3({
+const geistMono = Geist_Mono({
   subsets: ["latin"],
-  variable: "--font-source",
+  variable: "--font-geist-mono",
   display: "swap",
-});
-
-const plexMono = IBM_Plex_Mono({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  variable: "--font-ibm",
-  display: "swap",
+  weight: "400",
 });
 
 export const metadata: Metadata = {
@@ -31,7 +26,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${syne.variable} ${sourceSans.variable} ${plexMono.variable}`}>
+    <html lang="en" className={`${inter.variable} ${geistMono.variable}`}>
       <body>{children}</body>
     </html>
   );

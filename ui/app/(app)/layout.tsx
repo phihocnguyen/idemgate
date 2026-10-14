@@ -1,3 +1,4 @@
+import { Container, NavLink } from "@/components/ui";
 import Link from "next/link";
 import type { Metadata } from "next";
 
@@ -8,27 +9,20 @@ export const metadata: Metadata = {
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-[radial-gradient(1200px_600px_at_10%_-10%,#1a2a3d,var(--color-app))] font-sans text-app-text">
-      <div className="mx-auto max-w-[1100px] px-5 pb-16 pt-8">
-        <nav className="mb-8 flex items-baseline gap-4 border-b border-app-line pb-4">
-          <Link
-            href="/"
-            className="font-display text-xl font-bold tracking-tight text-app-text hover:text-app-text hover:no-underline"
-          >
+    <div className="min-h-screen bg-canvas text-ink">
+      <header className="sticky top-0 z-20 border-b border-hairline bg-canvas px-6 py-3">
+        <Container className="flex flex-wrap items-center gap-6">
+          <Link href="/" className="text-body-sm text-ink hover:no-underline">
             IdemGate
           </Link>
-          <Link href="/operations" className="text-app-accent">
-            Operations
-          </Link>
-          <Link href="/settings" className="text-app-accent">
-            Settings
-          </Link>
-          <Link href="/integrate" className="text-app-accent">
-            Integrate
-          </Link>
-        </nav>
-        {children}
-      </div>
+          <NavLink href="/operations">Operations</NavLink>
+          <NavLink href="/settings">Settings</NavLink>
+          <NavLink href="/integrate">Integrate</NavLink>
+        </Container>
+      </header>
+      <main className="px-6 py-8">
+        <Container>{children}</Container>
+      </main>
     </div>
   );
 }

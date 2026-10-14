@@ -1,4 +1,12 @@
-import Link from "next/link";
+import {
+  Band,
+  ButtonOutline,
+  ButtonPrimary,
+  Card,
+  Container,
+  Divider,
+  Eyebrow,
+} from "@/components/ui";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -6,43 +14,40 @@ export const metadata: Metadata = {
   description: "Onboarding guide to run IdemGate and wire claim → work → complete",
 };
 
-const btnPrimary =
-  "inline-flex items-center rounded-md bg-signal px-[1.15rem] py-[0.7rem] text-[0.95rem] font-semibold text-[#f4faf6] transition hover:-translate-y-px hover:bg-signal-deep hover:no-underline";
-const btnGhost =
-  "inline-flex items-center rounded-md border border-line bg-transparent px-[1.15rem] py-[0.7rem] text-[0.95rem] font-semibold text-ink transition hover:-translate-y-px hover:no-underline";
-
 export default function IntegratePage() {
   return (
     <>
-      <div className="mx-auto max-w-6xl px-6 pb-4 pt-10">
-        <h1 className="font-display text-[clamp(2rem,4vw,2.8rem)] tracking-tight">
-          Integrate IdemGate
-        </h1>
-        <p className="mt-2 max-w-xl text-[1.05rem] leading-relaxed text-muted">
-          Run the registry, choose an integration path, then prove a double-submit replays instead of
-          re-executing. Use the dashboard to inspect claims as you go.
-        </p>
-      </div>
+      <Band>
+        <Container>
+          <Eyebrow className="mb-4">Onboarding</Eyebrow>
+          <h1 className="text-display-md text-ink">Integrate IdemGate</h1>
+          <p className="mt-4 max-w-2xl text-body-lg text-body">
+            Run the registry, choose an integration path, then prove a double-submit replays instead
+            of re-executing. Use the dashboard to inspect claims as you go.
+          </p>
+          <nav className="mt-8 flex flex-wrap gap-2" aria-label="Onboarding sections">
+            {[
+              ["#run", "1. Run"],
+              ["#paths", "2. Paths"],
+              ["#loop", "3. Claim loop"],
+              ["#verify", "4. Verify"],
+            ].map(([href, label]) => (
+              <a
+                key={href}
+                href={href}
+                className="rounded-pill border border-white/25 px-3 py-1 text-button-md text-ink hover:border-white/40 hover:no-underline"
+              >
+                {label}
+              </a>
+            ))}
+          </nav>
+        </Container>
+      </Band>
 
-      <nav className="mx-auto flex max-w-6xl flex-wrap gap-2 px-6 pt-5" aria-label="Onboarding sections">
-        {[
-          ["#run", "1. Run"],
-          ["#paths", "2. Paths"],
-          ["#loop", "3. Claim loop"],
-          ["#verify", "4. Verify"],
-        ].map(([href, label]) => (
-          <a
-            key={href}
-            href={href}
-            className="rounded-md border border-line bg-panel px-3.5 py-1.5 text-sm hover:border-signal hover:text-signal-deep hover:no-underline"
-          >
-            {label}
-          </a>
-        ))}
-      </nav>
+      <Divider />
 
-      <Step id="run" label="Step 01" title="Run the registry">
-        <p className="mb-4 max-w-2xl text-muted leading-relaxed">
+      <Step id="run" eyebrow="Step 01" title="Run the registry">
+        <p className="mb-6 max-w-2xl text-body-md text-body">
           Start Postgres + server with Compose, or point Spring at an existing database.
         </p>
         <Pre>{`cd idemgate
@@ -53,27 +58,43 @@ docker compose up --build
 curl -s http://localhost:8080/actuator/health`}</Pre>
       </Step>
 
-      <Step id="paths" label="Step 02" title="Pick an integration path">
-        <p className="mb-4 max-w-2xl text-muted leading-relaxed">
+      <Divider />
+
+      <Step id="paths" eyebrow="Step 02" title="Pick an integration path">
+        <p className="mb-6 max-w-2xl text-body-md text-body">
           Same guarantees — different glue. Start with HTTP if you are exploring; use the starter in
           Spring apps.
         </p>
-        <div className="grid border-y border-line md:grid-cols-3">
-          <PathCol n="HTTP" title="Raw API">
-            <code>POST /v1/operations/claim</code> then complete with <code>ownerToken</code>. Any
-            language.
-          </PathCol>
-          <PathCol n="SDK" title="idemgate-client" mid>
-            Java HTTP client wrapping claim, heartbeat, and complete.
-          </PathCol>
-          <PathCol n="Starter" title="@Idempotent" last>
-            Annotate a method; the aspect runs the loop and fails closed by default.
-          </PathCol>
+        <div className="grid gap-4 md:grid-cols-3">
+          <Card>
+            <p className="text-caption-mono-sm text-mute">HTTP</p>
+            <h3 className="mt-3 text-display-xs">Raw API</h3>
+            <p className="mt-2 text-body-md text-body">
+              <code>POST /v1/operations/claim</code> then complete with <code>ownerToken</code>. Any
+              language.
+            </p>
+          </Card>
+          <Card>
+            <p className="text-caption-mono-sm text-mute">SDK</p>
+            <h3 className="mt-3 text-display-xs">idemgate-client</h3>
+            <p className="mt-2 text-body-md text-body">
+              Java HTTP client wrapping claim, heartbeat, and complete.
+            </p>
+          </Card>
+          <Card>
+            <p className="text-caption-mono-sm text-mute">Starter</p>
+            <h3 className="mt-3 text-display-xs">@Idempotent</h3>
+            <p className="mt-2 text-body-md text-body">
+              Annotate a method; the aspect runs the loop and fails closed by default.
+            </p>
+          </Card>
         </div>
       </Step>
 
-      <Step id="loop" label="Step 03" title="Claim → work → complete">
-        <p className="mb-4 max-w-2xl text-muted leading-relaxed">
+      <Divider />
+
+      <Step id="loop" eyebrow="Step 03" title="Claim → work → complete">
+        <p className="mb-6 max-w-2xl text-body-md text-body">
           Fingerprint is SHA-256 of the canonical payload. Same key + different fingerprint →{" "}
           <code>409 PAYLOAD_MISMATCH</code>.
         </p>
@@ -106,7 +127,7 @@ curl -s -X POST http://localhost:8080/v1/operations/<operationId>/complete \\
 # 4) Double-submit: claim again with the same scope/key/fingerprint
 # → claimed=false, status=COMPLETED, response replayed`}</Pre>
 
-        <p className="mt-5 mb-4 text-muted">
+        <p className="mt-6 mb-4 text-body-md text-body">
           Spring starter path — dependency <code>idemgate-spring-boot-starter</code>, then:
         </p>
         <Pre>{`@Idempotent(scope = "payments", key = "#orderId + ':pay'")
@@ -122,8 +143,10 @@ idemgate:
     fail-closed: true`}</Pre>
       </Step>
 
-      <Step id="verify" label="Step 04" title="Verify in the dashboard">
-        <p className="mb-4 max-w-2xl text-muted leading-relaxed">
+      <Divider />
+
+      <Step id="verify" eyebrow="Step 04" title="Verify in the dashboard">
+        <p className="mb-6 max-w-2xl text-body-md text-body">
           Open the operations UI against the same API key. Confirm the record, filters, and body
           redaction defaults.
         </p>
@@ -136,93 +159,64 @@ idemgate:
           ].map((item) => (
             <li
               key={item}
-              className="relative border-b border-line py-2.5 pl-5 leading-snug text-muted before:absolute before:left-0 before:top-3.5 before:h-2 before:w-2 before:bg-signal"
+              className="border-b border-hairline py-3 pl-4 text-body-md text-body before:mr-3 before:inline-block before:text-mute before:content-['—']"
             >
               {item}
             </li>
           ))}
         </ul>
-        <div className="mt-6 flex flex-wrap gap-3">
-          <Link href="/operations" className={btnPrimary}>
-            Open operations
-          </Link>
-          <Link href="/settings" className={btnGhost}>
-            Settings
-          </Link>
+        <div className="mt-8 flex flex-wrap gap-3">
+          <ButtonPrimary href="/operations">Open operations</ButtonPrimary>
+          <ButtonOutline href="/settings">Settings</ButtonOutline>
         </div>
       </Step>
 
-      <section className="mx-auto max-w-6xl px-6 pb-16 pt-8">
-        <div className="flex flex-wrap items-baseline justify-between gap-5 border-t border-line py-8">
-          <div>
-            <h2 className="font-display text-[clamp(1.6rem,3vw,2.1rem)] tracking-tight">
-              Need the full contract?
-            </h2>
-            <p className="mt-2 max-w-xl text-[1.05rem] leading-relaxed text-muted">
+      <Divider />
+
+      <Band>
+        <Container className="flex flex-wrap items-end justify-between gap-6">
+          <div className="max-w-xl">
+            <Eyebrow className="mb-4">Docs</Eyebrow>
+            <h2 className="text-display-md text-ink">Need the full contract?</h2>
+            <p className="mt-4 text-body-lg text-body">
               Errors, heartbeat, business keys, and admin search live in{" "}
               <code>docs/api-contract.md</code>, <code>docs/fingerprint.md</code>, and{" "}
               <code>docs/troubleshooting.md</code>.
             </p>
           </div>
-          <Link href="/" className={btnGhost}>
-            Back to home
-          </Link>
-        </div>
-      </section>
+          <ButtonOutline href="/">Back to home</ButtonOutline>
+        </Container>
+      </Band>
     </>
   );
 }
 
 function Step({
   id,
-  label,
+  eyebrow,
   title,
   children,
 }: {
   id: string;
-  label: string;
+  eyebrow: string;
   title: string;
   children: React.ReactNode;
 }) {
   return (
-    <section id={id} className="mx-auto max-w-6xl scroll-mt-4 px-6 py-9">
-      <div className="mb-1 font-mono text-xs uppercase tracking-[0.1em] text-signal">{label}</div>
-      <h2 className="mb-2 font-display text-[1.45rem] tracking-tight">{title}</h2>
-      {children}
-    </section>
+    <Band>
+      <Container id={id} className="scroll-mt-16">
+        <Eyebrow className="mb-4">{eyebrow}</Eyebrow>
+        <h2 className="mb-4 text-display-md text-ink">{title}</h2>
+        {children}
+      </Container>
+    </Band>
   );
 }
 
 function Pre({ children }: { children: string }) {
   return (
-    <pre className="m-0 overflow-x-auto rounded-lg bg-code px-4 py-4 font-mono text-[0.82rem] leading-relaxed whitespace-pre text-code-fg">
+    <pre className="m-0 overflow-x-auto rounded-sm border border-hairline bg-canvas-mid px-6 py-4 font-mono text-body-sm leading-relaxed whitespace-pre text-body">
       {children}
     </pre>
-  );
-}
-
-function PathCol({
-  n,
-  title,
-  children,
-  mid,
-  last,
-}: {
-  n: string;
-  title: string;
-  children: React.ReactNode;
-  mid?: boolean;
-  last?: boolean;
-}) {
-  return (
-    <div
-      className={`border-line py-5 md:py-6 ${last ? "" : "border-b md:border-b-0 md:border-r"} ${
-        mid || last ? "md:px-5" : "md:pr-5"
-      }`}
-    >
-      <div className="mb-2 font-mono text-xs tracking-wider text-signal">{n}</div>
-      <h3 className="mb-1.5 font-display text-lg tracking-tight">{title}</h3>
-      <p className="m-0 text-[0.98rem] leading-relaxed text-muted">{children}</p>
-    </div>
   );
 }

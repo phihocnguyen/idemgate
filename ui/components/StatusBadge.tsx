@@ -1,14 +1,14 @@
 const styles: Record<string, string> = {
-  IN_PROGRESS: "bg-app-warn/25 text-app-warn",
-  COMPLETED: "bg-app-ok/25 text-app-ok",
-  FAILED: "bg-app-bad/25 text-app-bad",
-  UNKNOWN: "bg-app-bad/25 text-app-bad",
+  IN_PROGRESS: "border-accent-breeze/40 text-accent-breeze",
+  COMPLETED: "border-accent-sunset/40 text-accent-sunset",
+  FAILED: "border-accent-twilight/40 text-accent-twilight",
+  UNKNOWN: "border-accent-twilight/40 text-accent-twilight",
 };
 
 export function StatusBadge({ status }: { status: string }) {
   return (
     <span
-      className={`inline-block rounded px-1.5 py-0.5 text-xs font-semibold ${styles[status] ?? "bg-app-line text-app-muted"}`}
+      className={`inline-block border px-2 py-1 text-caption-mono-sm ${styles[status] ?? "border-hairline text-mute"}`}
     >
       {status}
     </span>

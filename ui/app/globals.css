@@ -1,30 +1,37 @@
 @import "tailwindcss";
 
+/*
+  DESIGN.md tokens.
+  Spacing maps to Tailwind defaults (do NOT redefine --spacing-xl etc. —
+  that collapses max-w-xl / w-xl to 24px):
+  xs 4→1 · sm 8→2 · md 12→3 · lg 16→4 · xl 24→6 · 2xl 32→8 · 3xl 48→12 · 4xl 64→16
+*/
+
 @theme {
-  --font-display: var(--font-syne), ui-sans-serif, system-ui, sans-serif;
-  --font-sans: var(--font-source), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-ibm), ui-monospace, monospace;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  --color-ink: #0e1512;
-  --color-paper: #eef1ec;
-  --color-paper-deep: #e2e7e0;
-  --color-signal: #1f7a4c;
-  --color-signal-deep: #145c38;
-  --color-line: #c5cec4;
-  --color-muted: #5c6b62;
-  --color-panel: #f7f9f5;
-  --color-code: #121a16;
-  --color-code-fg: #d7e6dc;
+  --color-primary: #ffffff;
+  --color-on-primary: #0a0a0a;
+  --color-ink: #ffffff;
+  --color-ink-hover: #fafaf7;
+  --color-body: #dadbdf;
+  --color-body-mid: #7d8187;
+  --color-mute: #7d8187;
+  --color-hairline: #212327;
+  --color-canvas: #0a0a0a;
+  --color-canvas-soft: #1a1c20;
+  --color-canvas-card: #191919;
+  --color-canvas-mid: #363a3f;
+  --color-accent-sunset: #ff7a17;
+  --color-accent-sunset-soft: #ffc285;
+  --color-accent-dusk: #7c3aed;
+  --color-accent-twilight: #c4b5fd;
+  --color-accent-breeze: #a0c3ec;
+  --color-accent-midnight: #0d1726;
 
-  --color-app: #0f1419;
-  --color-app-panel: #1a222c;
-  --color-app-line: #2a3542;
-  --color-app-text: #e7eef7;
-  --color-app-muted: #8b9bb0;
-  --color-app-accent: #3d9cfd;
-  --color-app-ok: #3ecf8e;
-  --color-app-warn: #f5a524;
-  --color-app-bad: #f07178;
+  --radius-sm: 8px;
+  --radius-pill: 9999px;
 }
 
 @layer base {
@@ -34,7 +41,7 @@
   }
 
   body {
-    @apply bg-paper font-sans text-ink antialiased;
+    @apply bg-canvas font-sans text-ink antialiased;
   }
 
   a {
@@ -42,7 +49,7 @@
   }
 
   a:hover {
-    @apply underline;
+    @apply text-ink-hover;
   }
 
   code {
@@ -50,10 +57,86 @@
   }
 }
 
+@utility text-display-xl {
+  font-size: 96px;
+  font-weight: 400;
+  line-height: 96px;
+  letter-spacing: -2.4px;
+}
+
+@utility text-display-lg {
+  font-size: 72px;
+  font-weight: 400;
+  line-height: 72px;
+  letter-spacing: -1.8px;
+}
+
+@utility text-display-md {
+  font-size: 48px;
+  font-weight: 400;
+  line-height: 48px;
+  letter-spacing: -1.2px;
+}
+
+@utility text-display-sm {
+  font-size: 32px;
+  font-weight: 400;
+  line-height: 36px;
+  letter-spacing: -0.6px;
+}
+
+@utility text-display-xs {
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 28px;
+}
+
+@utility text-body-lg {
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 28px;
+}
+
+@utility text-body-md {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+}
+
+@utility text-body-sm {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+}
+
+@utility text-caption-mono {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+}
+
+@utility text-caption-mono-sm {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 16px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+}
+
+@utility text-button-md {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+}
+
 @keyframes rise {
   from {
     opacity: 0;
-    transform: translateY(14px);
+    transform: translateY(12px);
   }
   to {
     opacity: 1;
@@ -73,7 +156,7 @@
 @keyframes slide-in {
   from {
     opacity: 0;
-    transform: translateX(-12px);
+    transform: translateX(-8px);
   }
   to {
     opacity: 1;
@@ -81,23 +164,30 @@
   }
 }
 
-@keyframes sweep {
-  0%,
-  100% {
-    transform: translateY(-20px);
-    opacity: 0.2;
-  }
-  50% {
-    transform: translateY(20px);
-    opacity: 0.85;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .motion-safe-rise,
   .motion-safe-fade,
-  .motion-safe-slide,
-  .motion-safe-sweep {
+  .motion-safe-slide {
     animation: none !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .text-display-xl {
+    font-size: 48px;
+    line-height: 48px;
+    letter-spacing: -1.2px;
+  }
+
+  .text-display-lg {
+    font-size: 40px;
+    line-height: 44px;
+    letter-spacing: -1px;
+  }
+
+  .text-display-md {
+    font-size: 32px;
+    line-height: 36px;
+    letter-spacing: -0.6px;
   }
 }
