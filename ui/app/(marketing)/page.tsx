@@ -20,12 +20,15 @@ export default function LandingPage() {
     <>
       <section className="relative isolate min-h-[min(100vh,920px)] overflow-hidden bg-canvas">
         <HeroCanvas />
-        {/* Soft vignette so copy stays readable over the WebGL field */}
+        {/* Left-weighted vignette: keep copy readable, leave the right side for WebGL */}
         <div
-          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_30%_40%,rgba(10,10,10,0.15)_0%,rgba(10,10,10,0.72)_55%,rgba(10,10,10,0.92)_100%)]"
+          className="pointer-events-none absolute inset-0 z-[1] bg-[linear-gradient(90deg,rgba(10,10,10,0.92)_0%,rgba(10,10,10,0.55)_42%,rgba(10,10,10,0.15)_70%,rgba(10,10,10,0.35)_100%)]"
           aria-hidden
         />
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-canvas to-transparent" aria-hidden />
+        <div
+          className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-32 bg-gradient-to-t from-canvas to-transparent"
+          aria-hidden
+        />
 
         <Container className="relative z-10 flex min-h-[min(100vh,920px)] flex-col justify-center px-6 py-16 motion-safe-rise animate-[rise_700ms_ease_both]">
           <Eyebrow className="mb-6">Idempotency registry</Eyebrow>
@@ -39,7 +42,7 @@ export default function LandingPage() {
             <ButtonPrimary href="/integrate">Integration guide</ButtonPrimary>
             <ButtonOutline href="/operations">Open dashboard</ButtonOutline>
           </div>
-          <p className="mt-10 text-caption-mono-sm text-mute">Drag · explore the claim field</p>
+          <p className="mt-10 text-caption-mono-sm text-mute">Move · explore the claim field</p>
         </Container>
       </section>
 
