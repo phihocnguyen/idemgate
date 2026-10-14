@@ -7,6 +7,15 @@ function one(v: string | string[] | undefined): string | undefined {
   return Array.isArray(v) ? v[0] : v;
 }
 
+function opsQuery(params: Record<string, string | undefined>) {
+  const q = new URLSearchParams();
+  Object.entries(params).forEach(([k, v]) => {
+    if (v) q.set(k, v);
+  });
+  const s = q.toString();
+  return s ? `/operations?${s}` : "/operations";
+}
+
 export default async function OperationsPage({ searchParams }: { searchParams: SearchParams }) {
   const sp = await searchParams;
   const status = one(sp.status);
@@ -24,6 +33,8 @@ export default async function OperationsPage({ searchParams }: { searchParams: S
   } catch (e) {
     error = e instanceof Error ? e.message : String(e);
   }
+
+  const base = { status, scope, key, businessKey, q, limit };
 
   return (
     <>
@@ -111,30 +122,20 @@ export default async function OperationsPage({ searchParams }: { searchParams: S
           <div style={{ display: "flex", gap: "0.75rem", marginTop: "1rem" }}>
             {Number(offset) > 0 && (
               <Link
-                href={`/?${new URLSearchParams({
-                  ...(status ? { status } : {}),
-                  ...(scope ? { scope } : {}),
-                  ...(key ? { key } : {}),
-                  ...(businessKey ? { businessKey } : {}),
-                  ...(q ? { q } : {}),
-                  limit,
+                href={opsQuery({
+                  ...base,
                   offset: String(Math.max(0, Number(offset) - Number(limit))),
-                }).toString()}`}
+                })}
               >
                 ← Prev
               </Link>
             )}
             {page.offset + page.items.length < page.total && (
               <Link
-                href={`/?${new URLSearchParams({
-                  ...(status ? { status } : {}),
-                  ...(scope ? { scope } : {}),
-                  ...(key ? { key } : {}),
-                  ...(businessKey ? { businessKey } : {}),
-                  ...(q ? { q } : {}),
-                  limit,
+                href={opsQuery({
+                  ...base,
                   offset: String(Number(offset) + Number(limit)),
-                }).toString()}`}
+                })}
               >
                 Next →
               </Link>

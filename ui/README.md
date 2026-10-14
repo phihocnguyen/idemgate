@@ -15,7 +15,9 @@ Open http://localhost:3000. The UI calls the server admin API at
 
 ## Pages
 
-- `/` — operations list with status / scope / key / businessKey / free-text filters
+- `/` — marketing landing
+- `/integrate` — onboarding / integration guide (run → paths → claim loop → verify)
+- `/operations` — operations list (filters: status / scope / key / businessKey / q)
 - `/operations/[id]` — operation detail (response body redacted unless server exposes it)
 - `/settings` — runtime settings (TTL, lease, retention, body exposure)
 

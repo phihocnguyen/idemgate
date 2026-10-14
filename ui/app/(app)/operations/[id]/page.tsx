@@ -18,7 +18,7 @@ export default async function OperationDetailPage({ params }: { params: Params }
     return (
       <>
         <p>
-          <Link href="/">← Operations</Link>
+          <Link href="/operations">← Operations</Link>
         </p>
         <p className="error">Failed to load operation: {error}</p>
       </>
@@ -28,7 +28,7 @@ export default async function OperationDetailPage({ params }: { params: Params }
   return (
     <>
       <p>
-        <Link href="/">← Operations</Link>
+        <Link href="/operations">← Operations</Link>
       </p>
       <h1>Operation detail</h1>
       <p className="mono muted">{op.operationId}</p>
