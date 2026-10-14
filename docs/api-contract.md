@@ -82,3 +82,36 @@ Extends lease while work is still running.
 ## GET /v1/operations?status=UNKNOWN&limit=50
 
 Lists UNKNOWN operations for reconciliation (no scope/key required).
+
+---
+
+## Admin API
+
+Dashboard / ops inspection. Same `X-Api-Key` auth. Response bodies are **redacted by default**
+(`idemgate.expose-response-body=false`); list never returns body content.
+
+### GET /v1/admin/operations
+
+Query params: `status`, `scope`, `key`, `businessKey`, `q` (ILIKE on key/path/id/businessKey),
+`operationId`, `from`, `to` (ISO-8601), `limit` (1–200, default 50), `offset`.
+
+```json
+{
+  "items": [{ "operationId": "…", "status": "COMPLETED", "responseBodyPresent": true, "responseBody": null }],
+  "total": 1,
+  "limit": 50,
+  "offset": 0
+}
+```
+
+### GET /v1/admin/operations/{operationId}
+
+Full metadata; `responseBody` only when `expose-response-body=true`.
+
+### GET /v1/admin/settings
+
+Returns retention, default TTL/lease, max body bytes, `exposeResponseBody`, and distinct `scopes`.
+
+### PATCH /v1/admin/settings
+
+Partial update of the same knobs (in-memory for the running process).

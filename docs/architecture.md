@@ -8,7 +8,7 @@ idemgate/
   idemgate-client/                 # Java SDK
   idemgate-spring-boot-starter/    # @Idempotent integration
   samples/demo-app/       # example consumer
-  ui/                     # future frontend (Vercel Root Directory = ui)
+  ui/                     # Next.js dashboard (Vercel Root Directory = ui)
   docs/
 ```
 
@@ -18,7 +18,8 @@ flowchart LR
   Starter --> Client
   Client --> Server
   Server --> Postgres
-  FutureUI["ui/"] -.-> Server
+  Dashboard["ui/"] --> AdminAPI["/v1/admin/**"]
+  AdminAPI --> Server
 ```
 
-Server is the source of truth for claim/complete/lease. The starter encodes the claim → work → complete loop and fail-closed defaults.
+Server is the source of truth for claim/complete/lease. The starter encodes the claim → work → complete loop and fail-closed defaults. The dashboard reads `/v1/admin/**` (body redacted by default).

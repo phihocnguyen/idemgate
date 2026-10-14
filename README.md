@@ -10,7 +10,7 @@ Idempotency registry + Java SDK + Spring Boot starter (monorepo).
 | [`idemgate-client/`](idemgate-client/) | Java HTTP SDK |
 | [`idemgate-spring-boot-starter/`](idemgate-spring-boot-starter/) | `@Idempotent` + `Idempotency-Key` |
 | [`samples/demo-app/`](samples/demo-app/) | Payment + webhook sample |
-| [`ui/`](ui/) | Future frontend (deploy Root Directory `ui` on Vercel) |
+| [`ui/`](ui/) | Next.js dashboard (Vercel Root Directory `ui`) |
 
 ## Quick start (server)
 
@@ -62,7 +62,18 @@ curl -s -X POST http://localhost:8081/api/orders/ord_1/charges \
 | [docs/troubleshooting.md](docs/troubleshooting.md) | Ops / integration issues |
 | [docs/git-convention.md](docs/git-convention.md) | Conventional Commits |
 | [docs/demo.md](docs/demo.md) | Failure-mode demos |
-| [ui/README.md](ui/README.md) | Vercel UI notes |
+| [ui/README.md](ui/README.md) | Dashboard setup / Vercel |
+
+## Dashboard (ui)
+
+```bash
+cd ui
+cp .env.example .env.local
+npm install
+npm run dev
+```
+
+Open http://localhost:3000 — calls `/v1/admin/**` on the server (CORS allows localhost:3000).
 
 ## Configuration (server)
 
@@ -71,3 +82,5 @@ curl -s -X POST http://localhost:8081/api/orders/ord_1/charges \
 | `IDEMGATE_API_KEY` | `dev-secret-change-me` | API key |
 | `idemgate.default-ttl-seconds` | `300` | Operation TTL |
 | `idemgate.default-lease-seconds` | `60` | Owner lease before reclaim |
+| `idemgate.expose-response-body` | `false` | Include bodies in admin detail |
+| `IDEMGATE_CORS_ORIGINS` | `http://localhost:3000,...` | Dashboard origins |

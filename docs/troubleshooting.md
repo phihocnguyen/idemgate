@@ -10,6 +10,8 @@
 | `409 BUSINESS_KEY_CONFLICT` | Same business key, different idempotency key | Reuse original key or change business key |
 | Starter fails closed | IdemGate unreachable | Start server; or set `idemgate.client.fail-closed=false` only if acceptable |
 | Lease reclaim re-ran work | Worker died past lease | Ensure heartbeat for long jobs; design side effects for reclaim |
+| Dashboard empty / CORS error | UI origin not allowed | Set `IDEMGATE_CORS_ORIGINS` to the UI origin; match API key env |
+| Admin `responseBody` always null | Body redaction on | Set `idemgate.expose-response-body=true` (or PATCH settings) only if acceptable |
 
 ## Transaction boundaries
 
