@@ -35,8 +35,10 @@ idemgate:
   max-response-body-bytes: ${IDEMGATE_MAX_RESPONSE_BODY_BYTES:65536}
   cleanup-interval-ms: ${IDEMGATE_CLEANUP_INTERVAL_MS:60000}
   expose-response-body: ${IDEMGATE_EXPOSE_RESPONSE_BODY:false}
+  ops-username: ${IDEMGATE_OPS_USERNAME:admin}
+  ops-password: ${IDEMGATE_OPS_PASSWORD:admin}
   cors:
-    allowed-origins: ${IDEMGATE_CORS_ORIGINS:http://localhost:3000,http://127.0.0.1:3000}
+    allowed-origins: ${IDEMGATE_CORS_ORIGINS:http://localhost:5173,http://127.0.0.1:5173,http://localhost:3000,http://127.0.0.1:3000}
 
 logging:
   level:

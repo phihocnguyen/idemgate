@@ -25,7 +25,9 @@ public class SecurityConfig {
 						.anyRequest().permitAll())
 				.httpBasic(basic -> basic.disable())
 				.formLogin(form -> form.disable())
-				.addFilterBefore(new ApiKeyAuthFilter(properties.getApiKey()),
+				.addFilterBefore(
+						new ApiKeyAuthFilter(properties.getApiKey(), properties.getOpsUsername(),
+								properties.getOpsPassword()),
 						UsernamePasswordAuthenticationFilter.class);
 		return http.build();
 	}

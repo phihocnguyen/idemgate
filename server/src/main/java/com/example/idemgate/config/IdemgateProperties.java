@@ -15,6 +15,12 @@ public class IdemgateProperties {
 	/** When false (default), admin APIs omit response body content. */
 	private boolean exposeResponseBody = false;
 
+	/** Ops console HTTP Basic username (dashboard only; claim API still uses api-key). */
+	private String opsUsername = "admin";
+
+	/** Ops console HTTP Basic password. */
+	private String opsPassword = "admin";
+
 	public String getApiKey() {
 		return apiKey;
 	}
@@ -69,5 +75,21 @@ public class IdemgateProperties {
 
 	public void setExposeResponseBody(boolean exposeResponseBody) {
 		this.exposeResponseBody = exposeResponseBody;
+	}
+
+	public String getOpsUsername() {
+		return opsUsername;
+	}
+
+	public void setOpsUsername(String opsUsername) {
+		this.opsUsername = opsUsername;
+	}
+
+	public String getOpsPassword() {
+		return opsPassword;
+	}
+
+	public void setOpsPassword(String opsPassword) {
+		this.opsPassword = opsPassword;
 	}
 }

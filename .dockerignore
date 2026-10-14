@@ -3,6 +3,7 @@
 **/target
 **/node_modules
 ui
+web/dist
 docs
 scripts
 *.md

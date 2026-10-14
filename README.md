@@ -10,7 +10,7 @@ Idempotency registry + Java SDK + Spring Boot starter (monorepo).
 | [`idemgate-client/`](idemgate-client/) | Java HTTP SDK |
 | [`idemgate-spring-boot-starter/`](idemgate-spring-boot-starter/) | `@Idempotent` + `Idempotency-Key` |
 | [`samples/demo-app/`](samples/demo-app/) | Payment + webhook sample |
-| [`ui/`](ui/) | Next.js dashboard (Vercel Root Directory `ui`) |
+| [`web/`](web/) | Ops console (Vite React; embedded at `/ui` in the server image) |
 
 ## Quick start (server)
 
@@ -62,26 +62,30 @@ curl -s -X POST http://localhost:8081/api/orders/ord_1/charges \
 | [docs/troubleshooting.md](docs/troubleshooting.md) | Ops / integration issues |
 | [docs/git-convention.md](docs/git-convention.md) | Conventional Commits |
 | [docs/demo.md](docs/demo.md) | Failure-mode demos |
-| [ui/README.md](ui/README.md) | Dashboard setup / Vercel |
+| [web/README.md](web/README.md) | Ops console (dev + Docker embed) |
 
-## Dashboard (ui)
+## Ops dashboard (`web/` → `/ui`)
+
+Prometheus-style console, packed into the server Docker image.
 
 ```bash
-cd ui
-cp .env.example .env.local
-npm install
-npm run dev
-```
+# Dev (proxies /v1 → :8080)
+cd web && npm install && npm run dev
+# → http://localhost:5173/ui/   login admin / admin
 
-Open http://localhost:3000 — landing + `/integrate` onboarding; dashboard at `/operations`
-(calls `/v1/admin/**`; CORS allows localhost:3000).
+# With Docker (UI at same origin as API)
+docker compose up --build
+# → http://localhost:8080/ui/
+```
 
 ## Configuration (server)
 
 | Env | Default | Meaning |
 |-----|---------|---------|
-| `IDEMGATE_API_KEY` | `dev-secret-change-me` | API key |
+| `IDEMGATE_API_KEY` | `dev-secret-change-me` | Claim/complete API key |
+| `IDEMGATE_OPS_USERNAME` | `admin` | Ops console Basic user |
+| `IDEMGATE_OPS_PASSWORD` | `admin` | Ops console Basic password |
 | `idemgate.default-ttl-seconds` | `300` | Operation TTL |
 | `idemgate.default-lease-seconds` | `60` | Owner lease before reclaim |
 | `idemgate.expose-response-body` | `false` | Include bodies in admin detail |
-| `IDEMGATE_CORS_ORIGINS` | `http://localhost:3000,...` | Dashboard origins |
+| `IDEMGATE_CORS_ORIGINS` | `http://localhost:5173,...` | Dev dashboard origins |
