@@ -35,13 +35,12 @@
 }
 
 @layer base {
-  html,
-  body {
-    @apply min-h-full;
+  html {
+    @apply min-h-full scroll-smooth;
   }
 
   body {
-    @apply bg-canvas font-sans text-ink antialiased;
+    @apply min-h-full bg-canvas font-sans text-ink antialiased;
   }
 
   a {
@@ -54,6 +53,12 @@
 
   code {
     @apply font-mono text-[0.9em];
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
   }
 }
 
@@ -164,11 +169,145 @@
   }
 }
 
+/* Scroll / mount reveals — CSS-driven so SSR HTML matches hydration */
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity 700ms cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0ms),
+    transform 700ms cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0ms);
+  will-change: opacity, transform;
+}
+
+.reveal-on {
+  opacity: 1;
+  transform: none;
+}
+
+/* Device screen / code line transitions */
+.mac-screen {
+  height: 100%;
+}
+
+.mac-screen-in {
+  animation: mac-fade-up 480ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.mac-screen-out {
+  animation: mac-fade-down 220ms ease-in both;
+}
+
+.mac-code-in {
+  animation: mac-fade-up 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.mac-line {
+  opacity: 0;
+  transform: translateY(6px);
+}
+
+.mac-line-on {
+  animation: mac-line-in 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: calc(var(--i, 0) * 28ms);
+}
+
+.mac-chart-stroke {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: mac-draw 1.15s cubic-bezier(0.22, 1, 0.36, 1) 80ms forwards;
+}
+
+.mac-chart-fill {
+  opacity: 0;
+  animation: fade-in 700ms ease 350ms forwards;
+}
+
+.mac-caret {
+  display: inline-block;
+  width: 7px;
+  height: 1em;
+  margin-left: 2px;
+  vertical-align: text-bottom;
+  background: #ff7a17;
+  animation: mac-blink 1s steps(1) infinite;
+}
+
+.mac-key:active {
+  filter: brightness(1.35);
+}
+
+@keyframes mac-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes mac-fade-down {
+  from {
+    opacity: 1;
+    transform: none;
+  }
+  to {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+@keyframes mac-line-in {
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes mac-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes mac-blink {
+  0%,
+  45% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .motion-safe-rise,
   .motion-safe-fade,
   .motion-safe-slide {
     animation: none !important;
+  }
+
+  .reveal,
+  .reveal-on {
+    opacity: 1;
+    transform: none;
+    transition: none;
+    will-change: auto;
+  }
+
+  .mac-screen-in,
+  .mac-screen-out,
+  .mac-code-in,
+  .mac-line-on,
+  .mac-chart-stroke,
+  .mac-chart-fill,
+  .mac-caret {
+    animation: none !important;
+    opacity: 1;
+    transform: none;
+    stroke-dashoffset: 0;
   }
 }
 

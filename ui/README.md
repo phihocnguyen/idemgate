@@ -1,6 +1,6 @@
 # IdemGate UI
 
-Single-page interactive Three.js bench (`HeroScene`) at `/`.
+Marketing landing at `/` and interactive Three.js claim bench at `/bench`.
 
 ## Setup
 
@@ -9,14 +9,19 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:3000. Click the computer screen to run claim / retry / race demos.
+Open http://localhost:3000
+
+## Structure
+
+- `app/page.tsx` — landing
+- `app/bench/page.tsx` — ClaimBench (Three.js)
+- `components/landing/` — page sections
+- `components/device/` — interactive device demo (editor / ops / CLI screens)
+- `components/ui/` — Button, Container, Section, Reveal
+- `lib/landing/` — mock data, samples, syntax, chart math
 
 ## Stack
 
 - Next.js App Router
 - Tailwind CSS v4 + [`DESIGN.md`](DESIGN.md) tokens
-- Three.js + GSAP (`components/HeroScene.tsx`)
-
-## Vercel
-
-Set **Root Directory** to `ui`.
+- Three.js + GSAP on `/bench`

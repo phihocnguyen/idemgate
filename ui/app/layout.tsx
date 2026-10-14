@@ -17,8 +17,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "IdemGate",
-  description: "Interactive IdemGate claim / replay bench",
+  title: "IdemGate — Charge once. Retry forever.",
+  description:
+    "Postgres-backed idempotency registry. Claim keys, run side effects once, replay cached responses on retry.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

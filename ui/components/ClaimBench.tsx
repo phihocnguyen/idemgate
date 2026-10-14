@@ -12,9 +12,10 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 const SW = 1024; // screen canvas size
 const SH = 640;
-const LANE_Y = -2.15; // "network lane" under the computer
-const LANE_Z = 0.3;
-const LX = { client: -4.3, gate: -1.9, api: 3.3 };
+// Transaction lane sits ABOVE the computer so the keyboard never occludes it.
+const LANE_Y = 2.45;
+const LANE_Z = -0.15;
+const LX = { client: -3.6, gate: 0, api: 3.6 };
 
 const MONO = 'ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace';
 const mono = (size: number, weight = 500) => `${weight} ${size}px ${MONO}`;
@@ -125,25 +126,40 @@ function makeDotTexture() {
 
 function makeLabel(text: string, color: string) {
   const c = document.createElement("canvas");
-  c.width = 512;
-  c.height = 96;
+  // High-DPI canvas so sprite text stays sharp when zoomed in.
+  const W = 1024;
+  const H = 256;
+  c.width = W;
+  c.height = H;
   const g = c.getContext("2d")!;
-  g.font = mono(34, 600);
+  g.clearRect(0, 0, W, H);
+  g.font = mono(96, 700);
   g.textAlign = "center";
   g.textBaseline = "middle";
+  g.lineJoin = "round";
+  // Soft outline for contrast on dark fog
+  g.strokeStyle = "rgba(0,0,0,0.85)";
+  g.lineWidth = 10;
+  g.strokeText(text, W / 2, H / 2);
   g.fillStyle = color;
-  g.fillText(text, 256, 48);
+  g.fillText(text, W / 2, H / 2);
   const tex = new THREE.CanvasTexture(c);
   tex.colorSpace = THREE.SRGBColorSpace;
+  tex.anisotropy = 16;
+  tex.generateMipmaps = true;
+  tex.minFilter = THREE.LinearMipmapLinearFilter;
+  tex.magFilter = THREE.LinearFilter;
   const mat = new THREE.SpriteMaterial({
     map: tex,
     transparent: true,
     depthWrite: false,
+    depthTest: false,
     fog: false,
     opacity: 0,
   });
   const sprite = new THREE.Sprite(mat);
-  sprite.scale.set(1.5, 0.28, 1);
+  sprite.scale.set(2.2, 0.55, 1);
+  sprite.renderOrder = 10;
   return { sprite, mat, tex };
 }
 
@@ -152,25 +168,20 @@ function makeLabel(text: string, color: string) {
 /* -------------------------------------------------------------------------- */
 
 type Props = {
-  /** "right": máy tính lệch phải để chừa chỗ cho headline bên trái (màn hình rộng). */
+  /** Kept for API compatibility; bench is always centered. */
   placement?: "center" | "right";
 };
 
 /**
- * Hero 3D: một chiếc máy tính tương tác được, chạy demo IdemGate ngay trên màn hình.
+ * Full-page interactive computer bench for IdemGate demos.
  *
- *  client ──▶ [ IdemGate ] ──▶ your API
+ *  CLIENT ──▶ IDEMGATE ──▶ YOUR API   (lane above the machine)
  *
- *  - NEW PAYMENT : key mới → gate "claim" key → API charge 1 lần → 201
- *  - RETRY       : cùng key + body → gate trả lại response đã cache (200), API không bị gọi
- *  - RACE ×3     : 3 request đồng thời cùng key → 1 request đi qua, 2 request nhận 409
- *  - TAMPER      : cùng key nhưng body khác → 422 (key reuse)
- *  - GATE ON/OFF : tắt gate để thấy double-charge xảy ra như thế nào
- *
- * Tự chạy demo khi idle, dừng khi người dùng tương tác, tự chạy lại sau 14s.
- * Section chứa component này cần `position: relative` (cũng là trigger cho scroll).
+ *  - NEW PAYMENT / RETRY / RACE / TAMPER / GATE / RESET on the screen
+ *  - Autoplay when idle; pauses on user interaction
  */
-export function HeroScene({ placement = "center" }: Props) {
+export function ClaimBench({ placement = "center" }: Props) {
+  void placement;
   const mountRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -196,8 +207,8 @@ export function HeroScene({ placement = "center" }: Props) {
     const scene = new THREE.Scene();
     scene.fog = new THREE.FogExp2(0x0a0a0a, 0.03);
 
-    const camera = new THREE.PerspectiveCamera(40, w() / h(), 0.1, 100);
-    camera.position.set(0, 0.35, 9);
+    const camera = new THREE.PerspectiveCamera(36, w() / h(), 0.1, 100);
+    camera.position.set(0, 1.05, 6.2);
 
     const renderer = new THREE.WebGLRenderer({
       antialias: true,
@@ -254,7 +265,8 @@ export function HeroScene({ placement = "center" }: Props) {
     /* Computer: monitor + stand + keyboard                              */
     /* ---------------------------------------------------------------- */
     const mon = new THREE.Group();
-    mon.position.set(0, 0.5, 0);
+    // Raise the whole machine in frame; camera looks slightly down at the screen.
+    mon.position.set(0, 0.85, 0);
     stage.add(mon);
 
     const bodyMat = own(
@@ -308,8 +320,10 @@ export function HeroScene({ placement = "center" }: Props) {
 
     // Keyboard
     const kb = new THREE.Group();
-    kb.position.set(0, -1.6, 1.2);
-    kb.rotation.x = 0.4;
+    // Smaller / flatter keyboard so it does not dominate the lower frame.
+    kb.position.set(0, -1.15, 0.95);
+    kb.rotation.x = 0.22;
+    kb.scale.set(0.92, 0.92, 0.85);
     stage.add(kb);
 
     const plateGeo = own(new RoundedBoxGeometry(3.3, 0.08, 1.12, 3, 0.03));
@@ -440,7 +454,8 @@ export function HeroScene({ placement = "center" }: Props) {
       { ...makeLabel("YOUR API", "#a0a0aa"), x: LX.api },
     ];
     labels.forEach((l) => {
-      l.sprite.position.set(l.x, LANE_Y - 0.72, LANE_Z + 0.1);
+      // Labels sit above the lane nodes (not under them / on the bezel).
+      l.sprite.position.set(l.x, LANE_Y + 0.62, LANE_Z);
       stage.add(l.sprite);
       own(l.mat);
       own(l.tex);
@@ -627,34 +642,43 @@ export function HeroScene({ placement = "center" }: Props) {
     };
     const spawnPop = (text: string, color: string, x: number) => {
       const c = document.createElement("canvas");
-      c.width = 320;
-      c.height = 80;
+      const W = 640;
+      const H = 160;
+      c.width = W;
+      c.height = H;
       const g = c.getContext("2d")!;
-      g.font = mono(38, 700);
+      g.font = mono(72, 700);
       g.textAlign = "center";
       g.textBaseline = "middle";
+      g.strokeStyle = "rgba(0,0,0,0.75)";
+      g.lineWidth = 8;
+      g.strokeText(text, W / 2, H / 2);
       g.fillStyle = color;
       g.shadowColor = color;
-      g.shadowBlur = 12;
-      g.fillText(text, 160, 40);
+      g.shadowBlur = 18;
+      g.fillText(text, W / 2, H / 2);
       const tex = new THREE.CanvasTexture(c);
       tex.colorSpace = THREE.SRGBColorSpace;
+      tex.anisotropy = 16;
       const mat = new THREE.SpriteMaterial({
         map: tex,
         transparent: true,
         depthWrite: false,
+        depthTest: false,
         fog: false,
         opacity: 0,
       });
       const s = new THREE.Sprite(mat);
-      s.scale.set(1.3, 0.325, 1);
-      s.position.set(x, LANE_Y + 0.55, LANE_Z + 0.2);
+      s.renderOrder = 12;
+      s.scale.set(1.55, 0.39, 1);
+      // Float above lane labels so status chips stay readable.
+      s.position.set(x, LANE_Y + 1.05, LANE_Z + 0.2);
       stage.add(s);
       const entry: PopEntry = { s, mat, tex };
       pops.add(entry);
       const tl = reg(gsap.timeline({ onComplete: () => disposePop(entry) }));
       tl.to(mat, { opacity: 1, duration: 0.15 })
-        .to(s.position, { y: LANE_Y + 1.1, duration: 1.2, ease: "power2.out" }, 0)
+        .to(s.position, { y: LANE_Y + 1.65, duration: 1.2, ease: "power2.out" }, 0)
         .to(mat, { opacity: 0, duration: 0.5 }, 0.8);
     };
     const gatePop = (text: string, color: string) => spawnPop(text, color, LX.gate);
@@ -1278,13 +1302,13 @@ export function HeroScene({ placement = "center" }: Props) {
     /* Layout & frame loop                                               */
     /* ---------------------------------------------------------------- */
     const layout = () => {
+      // Always center + zoom in on the monitor.
+      stage.position.x = 0;
+      baseYaw = 0;
       const A = camera.aspect;
-      const wide = A > 1.15 && placement === "right";
-      stage.position.x = wide ? 1.35 : 0;
-      baseYaw = wide ? -0.16 : 0;
-      const half = A < 1 ? 2.6 : wide ? 5.9 : 4.9;
-      const fit = half / (Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * A);
-      baseZ = THREE.MathUtils.clamp(Math.max(8.4, fit), 8.4, 16);
+      const half = A < 1 ? 2.1 : 2.8;
+      const fit = half / Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
+      baseZ = THREE.MathUtils.clamp(fit, 5.2, 7.4);
     };
     layout();
 
@@ -1338,10 +1362,10 @@ export function HeroScene({ placement = "center" }: Props) {
       }
 
       // --- stage ---
-      stage.scale.setScalar(intro.scale * (1 - scr.p * 0.2));
-      stage.rotation.y = baseYaw + intro.spin + pointer.x * 0.28 + Math.sin(t * 0.3) * 0.04;
-      stage.rotation.x = -pointer.y * 0.08 + scr.p * 0.45;
-      stage.position.y = Math.sin(t * 0.6) * 0.05 + scr.p * 0.6;
+      stage.scale.setScalar(intro.scale * (1 - scr.p * 0.12));
+      stage.rotation.y = baseYaw + intro.spin + pointer.x * 0.22 + Math.sin(t * 0.3) * 0.03;
+      stage.rotation.x = -0.06 - pointer.y * 0.06 + scr.p * 0.2;
+      stage.position.y = 0.35 + Math.sin(t * 0.6) * 0.03 + scr.p * 0.25;
 
       // --- computer ---
       mon.scale.setScalar(0.9 + 0.1 * rv.mon);
@@ -1465,10 +1489,10 @@ export function HeroScene({ placement = "center" }: Props) {
       pointsMat.opacity = 0.6 * rv.points;
 
       // --- camera ---
-      camera.position.x = pointer.x * 0.35;
-      camera.position.y = 0.35 + pointer.y * 0.2;
-      camera.position.z = baseZ + intro.dolly + scr.p * 3.5;
-      camera.lookAt(stage.position.x * 0.35, 0, 0);
+      camera.position.x = pointer.x * 0.22;
+      camera.position.y = 1.05 + pointer.y * 0.12;
+      camera.position.z = baseZ + intro.dolly + scr.p * 2.2;
+      camera.lookAt(0, 0.95, 0);
 
       renderer.render(scene, camera);
     };
