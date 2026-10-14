@@ -1,10 +1,11 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
-// Production: served by Spring at http://host:8080/ui/
-export default defineConfig({
+// Dev: http://localhost:5173/
+// Prod build: embedded by Spring at http://host:15672/ui/
+export default defineConfig(({ command }) => ({
   plugins: [react()],
-  base: "/ui/",
+  base: command === "build" ? "/ui/" : "/",
   build: {
     outDir: "dist",
     emptyOutDir: true,
@@ -15,4 +16,4 @@ export default defineConfig({
       "/v1": "http://localhost:8080",
     },
   },
-});
+}));

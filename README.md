@@ -19,7 +19,7 @@ export IDEMGATE_API_KEY=dev-secret-change-me
 docker compose up --build
 ```
 
-API: `http://localhost:8080` · Health: `/actuator/health`
+API: `http://localhost:8080` · Ops UI: `http://localhost:15672/ui/` · Health: `/actuator/health`
 
 ```bash
 ./mvnw -pl server -am test
@@ -64,19 +64,29 @@ curl -s -X POST http://localhost:8081/api/orders/ord_1/charges \
 | [docs/demo.md](docs/demo.md) | Failure-mode demos |
 | [web/README.md](web/README.md) | Ops console (dev + Docker embed) |
 
-## Ops dashboard (`web/` → `/ui`)
+## Ops dashboard (`web/` → port `15672`)
 
-Prometheus-style console, packed into the server Docker image.
+UI is static files inside the server jar. Dedicated ops port (like RabbitMQ management).
 
 ```bash
-# Dev (proxies /v1 → :8080)
-cd web && npm install && npm run dev
-# → http://localhost:5173/ui/   login admin / admin
+# 1) Build UI into server/src/main/resources/static/ui/
+cd web && npm install && npm run build:embed && cd ..
 
-# With Docker (UI at same origin as API)
-docker compose up --build
-# → http://localhost:8080/ui/
+# 2) Run backend only
+./mvnw -pl server -am spring-boot:run
+
+# → API  http://localhost:8080
+# → Ops  http://localhost:15672/ui/   login admin / admin
 ```
+
+Docker (embeds `web/` automatically):
+
+```bash
+docker compose up --build
+# → http://localhost:15672/ui/
+```
+
+Hot-reload frontend (optional): `cd web && npm run dev` → http://localhost:5173/ (needs API on :8080).
 
 ## Configuration (server)
 
@@ -85,6 +95,7 @@ docker compose up --build
 | `IDEMGATE_API_KEY` | `dev-secret-change-me` | Claim/complete API key |
 | `IDEMGATE_OPS_USERNAME` | `admin` | Ops console Basic user |
 | `IDEMGATE_OPS_PASSWORD` | `admin` | Ops console Basic password |
+| `IDEMGATE_OPS_PORT` | `15672` | Ops UI port (`0` = only on 8080) |
 | `idemgate.default-ttl-seconds` | `300` | Operation TTL |
 | `idemgate.default-lease-seconds` | `60` | Owner lease before reclaim |
 | `idemgate.expose-response-body` | `false` | Include bodies in admin detail |

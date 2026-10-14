@@ -37,6 +37,8 @@ idemgate:
   expose-response-body: ${IDEMGATE_EXPOSE_RESPONSE_BODY:false}
   ops-username: ${IDEMGATE_OPS_USERNAME:admin}
   ops-password: ${IDEMGATE_OPS_PASSWORD:admin}
+  # Dedicated ops UI port (like RabbitMQ management 15672). Set 0 to disable.
+  ops-port: ${IDEMGATE_OPS_PORT:15672}
   cors:
     allowed-origins: ${IDEMGATE_CORS_ORIGINS:http://localhost:5173,http://127.0.0.1:5173,http://localhost:3000,http://127.0.0.1:3000}
 

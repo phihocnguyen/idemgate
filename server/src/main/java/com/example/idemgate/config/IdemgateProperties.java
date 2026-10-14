@@ -21,6 +21,12 @@ public class IdemgateProperties {
 	/** Ops console HTTP Basic password. */
 	private String opsPassword = "admin";
 
+	/**
+	 * Dedicated ops/management HTTP port (RabbitMQ {@code 15672}-style). {@code 0} disables
+	 * the extra connector; UI is then only on {@code server.port}.
+	 */
+	private int opsPort = 15672;
+
 	public String getApiKey() {
 		return apiKey;
 	}
@@ -91,5 +97,13 @@ public class IdemgateProperties {
 
 	public void setOpsPassword(String opsPassword) {
 		this.opsPassword = opsPassword;
+	}
+
+	public int getOpsPort() {
+		return opsPort;
+	}
+
+	public void setOpsPort(int opsPort) {
+		this.opsPort = opsPort;
 	}
 }

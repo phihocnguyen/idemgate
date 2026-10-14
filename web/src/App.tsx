@@ -12,9 +12,15 @@ function RequireAuth({ children }: { children: React.ReactNode }) {
   return children;
 }
 
+/** Vite BASE_URL is `/` in dev and `/ui/` in production builds. */
+function routerBasename() {
+  const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+  return base === "" ? undefined : base;
+}
+
 export default function App() {
   return (
-    <BrowserRouter basename="/ui">
+    <BrowserRouter basename={routerBasename()}>
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route

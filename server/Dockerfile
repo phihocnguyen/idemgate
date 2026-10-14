@@ -26,5 +26,5 @@ WORKDIR /app
 RUN addgroup -S idemgate && adduser -S idemgate -G idemgate
 COPY --from=build /workspace/server/target/idemgate-server-*.jar /app/app.jar
 USER idemgate
-EXPOSE 8080
+EXPOSE 8080 15672
 ENTRYPOINT ["java", "-jar", "/app/app.jar"]
