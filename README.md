@@ -73,7 +73,8 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:3000 — calls `/v1/admin/**` on the server (CORS allows localhost:3000).
+Open http://localhost:3000 — landing + `/integrate` onboarding; dashboard at `/operations`
+(calls `/v1/admin/**`; CORS allows localhost:3000).
 
 ## Configuration (server)
 

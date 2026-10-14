@@ -8,7 +8,7 @@ idemgate/
   idemgate-client/                 # Java SDK
   idemgate-spring-boot-starter/    # @Idempotent integration
   samples/demo-app/       # example consumer
-  ui/                     # Next.js dashboard (Vercel Root Directory = ui)
+  ui/                     # Landing + integrate guide + dashboard (Vercel Root = ui)
   docs/
 ```
 
