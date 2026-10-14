@@ -1,0 +1,14 @@
+---
+description: Conventional Commits — feat/fix/docs/test/chore; never Co-authored-by
+alwaysApply: true
+---
+
+# Git commits
+
+- Repo root: this project directory (`idemgate/`), not the parent folder.
+- Use **Conventional Commits**: `feat:`, `fix:`, `docs:`, `test:`, `chore:`, `refactor:`, `perf:`.
+- Split into many small commits; short imperative subject; no rambling body.
+- **NEVER** add `Co-authored-by`, `Co-Authored-By`, or any AI/tool co-author trailer.
+- Prefer `git commit-tree` or `-F` message file if the environment injects trailers.
+- **NEVER** amend or force-push unless the user explicitly asks.
+- Do not commit secrets.
