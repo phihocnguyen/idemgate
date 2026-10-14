@@ -32,6 +32,11 @@ public class OpsUiForwardFilter extends OncePerRequestFilter {
 		String context = request.getContextPath() == null ? "" : request.getContextPath();
 		String relative = path.startsWith(context) ? path.substring(context.length()) : path;
 
+		if ("/".equals(relative) || relative.isEmpty()) {
+			response.sendRedirect(context + "/ui/");
+			return;
+		}
+
 		if ("/ui".equals(relative)) {
 			response.sendRedirect(context + "/ui/");
 			return;

@@ -1,6 +1,6 @@
 # IdemGate Ops (web)
 
-Prometheus-style operations console. Served by the **backend** on the ops port (default **15672**), path `/ui/`.
+Prometheus-style operations console. Served by the **backend** on the container port (default **8080**), path `/ui/`.
 
 ## Backend-only (recommended)
 
@@ -13,14 +13,13 @@ npm run build:embed   # → server/src/main/resources/static/ui/
 ./mvnw -pl server -am spring-boot:run
 ```
 
-- Ops: **http://localhost:15672/ui/** — login `admin` / `admin`
-- API: **http://localhost:8080**
+Open **http://localhost:8080/ui/** — login `admin` / `admin`.
 
 Docker:
 
 ```bash
 docker compose up --build
-# → http://localhost:15672/ui/
+# → http://localhost:8080/ui/
 ```
 
 ## Frontend-only dev (hot reload)
@@ -29,5 +28,5 @@ Needs the API on `:8080`:
 
 ```bash
 npm run dev
-# → http://localhost:5173/   (base `/` in dev; proxies /v1 → :8080)
+# → http://localhost:5173/   (proxies /v1 → :8080)
 ```

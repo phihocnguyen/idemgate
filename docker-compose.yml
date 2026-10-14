@@ -20,8 +20,7 @@ services:
       context: .
       dockerfile: server/Dockerfile
     ports:
-      - "8080:8080"     # claim / complete API
-      - "15672:15672"   # ops console (RabbitMQ-style management port)
+      - "8080:8080"
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/idemgate
       SPRING_DATASOURCE_USERNAME: idemgate
@@ -29,10 +28,10 @@ services:
       IDEMGATE_API_KEY: ${IDEMGATE_API_KEY:-dev-secret-change-me}
       IDEMGATE_OPS_USERNAME: ${IDEMGATE_OPS_USERNAME:-admin}
       IDEMGATE_OPS_PASSWORD: ${IDEMGATE_OPS_PASSWORD:-admin}
-      IDEMGATE_OPS_PORT: ${IDEMGATE_OPS_PORT:-15672}
     depends_on:
       postgres:
         condition: service_healthy
+    # API + Ops UI: http://localhost:8080/ui/
 
 volumes:
   idemgate_pg:
