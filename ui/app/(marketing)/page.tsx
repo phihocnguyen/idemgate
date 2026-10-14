@@ -42,7 +42,9 @@ export default function LandingPage() {
             <ButtonPrimary href="/integrate">Integration guide</ButtonPrimary>
             <ButtonOutline href="/operations">Open dashboard</ButtonOutline>
           </div>
-          <p className="mt-10 text-caption-mono-sm text-mute">Move · explore the claim field</p>
+          <p className="mt-10 text-caption-mono-sm text-mute">
+            Click the screen · NEW / RETRY / RACE / TAMPER
+          </p>
         </Container>
       </section>
 
