@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import "@/app/globals.css";
-
+import "./globals.css";
 export const metadata: Metadata = {
   title: "IdemGate Dashboard",
   description: "Inspect idempotency operations and runtime settings",
