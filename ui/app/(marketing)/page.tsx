@@ -1,3 +1,4 @@
+import { HeroCanvas } from "@/components/HeroCanvas";
 import {
   Band,
   ButtonOutline,
@@ -17,8 +18,16 @@ export const metadata: Metadata = {
 export default function LandingPage() {
   return (
     <>
-      <Band className="motion-safe-rise animate-[rise_700ms_ease_both]">
-        <Container>
+      <section className="relative isolate min-h-[min(100vh,920px)] overflow-hidden bg-canvas">
+        <HeroCanvas />
+        {/* Soft vignette so copy stays readable over the WebGL field */}
+        <div
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_30%_40%,rgba(10,10,10,0.15)_0%,rgba(10,10,10,0.72)_55%,rgba(10,10,10,0.92)_100%)]"
+          aria-hidden
+        />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-canvas to-transparent" aria-hidden />
+
+        <Container className="relative z-10 flex min-h-[min(100vh,920px)] flex-col justify-center px-6 py-16 motion-safe-rise animate-[rise_700ms_ease_both]">
           <Eyebrow className="mb-6">Idempotency registry</Eyebrow>
           <h1 className="text-display-xl text-ink">IdemGate</h1>
           <p className="mt-6 max-w-xl text-display-sm text-ink">Safe retries for side-effecting APIs.</p>
@@ -30,8 +39,9 @@ export default function LandingPage() {
             <ButtonPrimary href="/integrate">Integration guide</ButtonPrimary>
             <ButtonOutline href="/operations">Open dashboard</ButtonOutline>
           </div>
+          <p className="mt-10 text-caption-mono-sm text-mute">Drag · explore the claim field</p>
         </Container>
-      </Band>
+      </section>
 
       <Divider />
 
@@ -85,21 +95,21 @@ export default function LandingPage() {
           <h2 className="text-display-md text-ink">Three calls. One owner.</h2>
           <p className="mt-3 mb-8 max-w-xl text-body-lg text-body">Deterministic retries.</p>
           <div className="grid gap-4 md:grid-cols-3">
-            <Card>
+            <Card className="transition duration-300 hover:border-white/25">
               <p className="text-caption-mono-sm text-mute">01</p>
               <h3 className="mt-3 text-display-xs text-ink">Claim</h3>
               <p className="mt-2 text-body-md text-body">
                 Atomic insert on scope + key. Winner receives an owner token and lease.
               </p>
             </Card>
-            <Card>
+            <Card className="transition duration-300 hover:border-white/25">
               <p className="text-caption-mono-sm text-mute">02</p>
               <h3 className="mt-3 text-display-xs text-ink">Work</h3>
               <p className="mt-2 text-body-md text-body">
                 Only the owner executes. Heartbeat extends the lease for long jobs.
               </p>
             </Card>
-            <Card>
+            <Card className="transition duration-300 hover:border-white/25">
               <p className="text-caption-mono-sm text-mute">03</p>
               <h3 className="mt-3 text-display-xs text-ink">Complete</h3>
               <p className="mt-2 text-body-md text-body">
@@ -150,7 +160,7 @@ function RegistryRow({
 
   return (
     <div
-      className="motion-safe-slide grid items-center gap-2 rounded-sm border border-hairline bg-canvas-card px-6 py-4 font-mono text-body-sm animate-[slide-in_650ms_ease_both] md:grid-cols-[9rem_1fr_auto]"
+      className="motion-safe-slide grid items-center gap-2 rounded-sm border border-hairline bg-canvas-card px-6 py-4 font-mono text-body-sm animate-[slide-in_650ms_ease_both] transition duration-300 hover:border-white/20 md:grid-cols-[9rem_1fr_auto]"
       style={{ animationDelay: delay }}
     >
       <span className={`inline-block border px-2 py-1 text-caption-mono-sm ${toneClass}`}>{status}</span>

@@ -12,6 +12,7 @@ npm run dev
 
 Styling uses **Tailwind CSS v4** + tokens from [`DESIGN.md`](DESIGN.md)
 (xAI-inspired near-black canvas, Inter + Geist Mono, white outline pills).
+Landing hero uses **Three.js** (`components/HeroScene.tsx`) for a wireframe claim field.
 
 Open http://localhost:3000. The UI calls the server admin API at
 `NEXT_PUBLIC_IDEMGATE_URL` with `X-Api-Key: NEXT_PUBLIC_IDEMGATE_API_KEY`.
