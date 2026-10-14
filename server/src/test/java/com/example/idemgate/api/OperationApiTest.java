@@ -14,14 +14,14 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
-import com.example.idemgate.SupportPostgres;
+import com.example.idemgate.config.SqliteTestConfig;
 
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class OperationApiTest extends SupportPostgres {
+class OperationApiTest extends SqliteTestConfig {
 
 	private static final String FP = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
 	private static final String API_KEY = "test-api-key";

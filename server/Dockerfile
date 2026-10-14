@@ -23,8 +23,10 @@ RUN chmod +x mvnw && ./mvnw -q -pl server -am -DskipTests package
 
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
-RUN addgroup -S idemgate && adduser -S idemgate -G idemgate
+RUN addgroup -S idemgate && adduser -S idemgate -G idemgate \
+	&& mkdir -p /data && chown idemgate:idemgate /data
 COPY --from=build /workspace/server/target/idemgate-server-*.jar /app/app.jar
 USER idemgate
+VOLUME ["/data"]
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "/app/app.jar"]

@@ -6,7 +6,7 @@ Idempotency registry + Java SDK + Spring Boot starter (monorepo).
 
 | Path | Role |
 |------|------|
-| [`server/`](server/) | PostgreSQL-backed claim/complete/lease API |
+| [`server/`](server/) | SQLite-backed claim/complete/lease API |
 | [`idemgate-client/`](idemgate-client/) | Java HTTP SDK |
 | [`idemgate-spring-boot-starter/`](idemgate-spring-boot-starter/) | `@Idempotent` + `Idempotency-Key` |
 | [`samples/demo-app/`](samples/demo-app/) | Payment + webhook sample |
@@ -54,6 +54,7 @@ curl -s -X POST http://localhost:8081/api/orders/ord_1/charges \
 
 | Doc | Description |
 |-----|-------------|
+| [docs/roadmap.md](docs/roadmap.md) | Phase 1–3 product roadmap |
 | [docs/problem-statement.md](docs/problem-statement.md) | Why IdemGate exists |
 | [docs/guarantees.md](docs/guarantees.md) | Guarantees |
 | [docs/api-contract.md](docs/api-contract.md) | HTTP API |
@@ -92,6 +93,7 @@ Hot-reload frontend (optional): `cd web && npm run dev` → http://localhost:517
 | Env | Default | Meaning |
 |-----|---------|---------|
 | `IDEMGATE_API_KEY` | `dev-secret-change-me` | Claim/complete API key |
+| `IDEMGATE_DB_PATH` | `./data/idemgate.db` | SQLite file path (or set `SPRING_DATASOURCE_URL`) |
 | `IDEMGATE_OPS_USERNAME` | `admin` | Ops console Basic user |
 | `IDEMGATE_OPS_PASSWORD` | `admin` | Ops console Basic password |
 | `idemgate.default-ttl-seconds` | `300` | Operation TTL |

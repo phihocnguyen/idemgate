@@ -2,7 +2,6 @@ package com.example.idemgate.persistence;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -46,7 +45,7 @@ public class OperationRepository {
 				)
 				ON CONFLICT (scope, idempotency_key) DO NOTHING
 				""")
-				.param("id", op.id())
+				.param("id", op.id().toString())
 				.param("scope", op.scope())
 				.param("key", op.idempotencyKey())
 				.param("fingerprint", op.fingerprint())
@@ -54,18 +53,19 @@ public class OperationRepository {
 				.param("requestMethod", op.requestMethod())
 				.param("requestPath", op.requestPath())
 				.param("ownerToken", op.ownerToken())
-				.param("leaseExpiresAt", Timestamp.from(op.leaseExpiresAt()))
+				.param("leaseExpiresAt", instant(op.leaseExpiresAt()))
 				.param("businessKey", op.businessKey())
-				.param("expiresAt", Timestamp.from(op.expiresAt()))
-				.param("retainUntil", Timestamp.from(op.retainUntil()))
-				.param("createdAt", Timestamp.from(op.createdAt()))
-				.param("updatedAt", Timestamp.from(op.updatedAt()))
+				.param("expiresAt", instant(op.expiresAt()))
+				.param("retainUntil", instant(op.retainUntil()))
+				.param("createdAt", instant(op.createdAt()))
+				.param("updatedAt", instant(op.updatedAt()))
 				.update();
 		return rows == 1;
 	}
 
 	public Optional<Operation> findById(UUID id) {
-		return jdbc.sql("SELECT * FROM operations WHERE id = :id").param("id", id).query(this::mapRow).optional();
+		return jdbc.sql("SELECT * FROM operations WHERE id = :id").param("id", id.toString()).query(this::mapRow)
+				.optional();
 	}
 
 	public Optional<Operation> findByScopeAndKey(String scope, String key) {
@@ -74,7 +74,8 @@ public class OperationRepository {
 	}
 
 	public Optional<Operation> findByScopeAndKeyForUpdate(String scope, String key) {
-		return jdbc.sql("SELECT * FROM operations WHERE scope = :scope AND idempotency_key = :key FOR UPDATE")
+		// SQLite has no row locks; uniqueness + transactional claim still serialize winners.
+		return jdbc.sql("SELECT * FROM operations WHERE scope = :scope AND idempotency_key = :key")
 				.param("scope", scope).param("key", key).query(this::mapRow).optional();
 	}
 
@@ -103,13 +104,13 @@ public class OperationRepository {
 				  AND lease_expires_at < :now
 				  AND fingerprint = :fingerprint
 				""")
-				.param("id", id)
+				.param("id", id.toString())
 				.param("fingerprint", fingerprint)
 				.param("ownerToken", ownerToken)
-				.param("leaseExpiresAt", Timestamp.from(leaseExpiresAt))
-				.param("expiresAt", Timestamp.from(expiresAt))
-				.param("retainUntil", Timestamp.from(retainUntil))
-				.param("now", Timestamp.from(now))
+				.param("leaseExpiresAt", instant(leaseExpiresAt))
+				.param("expiresAt", instant(expiresAt))
+				.param("retainUntil", instant(retainUntil))
+				.param("now", instant(now))
 				.update();
 		return rows == 1;
 	}
@@ -120,7 +121,7 @@ public class OperationRepository {
 				UPDATE operations
 				SET status = :status,
 				    response_status = :responseStatus,
-				    response_headers = CAST(:responseHeaders AS jsonb),
+				    response_headers = :responseHeaders,
 				    response_body = :responseBody,
 				    retain_until = :retainUntil,
 				    updated_at = :now,
@@ -129,14 +130,14 @@ public class OperationRepository {
 				  AND status = 'IN_PROGRESS'
 				  AND owner_token = :ownerToken
 				""")
-				.param("id", id)
+				.param("id", id.toString())
 				.param("ownerToken", ownerToken)
 				.param("status", status.name())
 				.param("responseStatus", responseStatus)
 				.param("responseHeaders", toJson(headers))
 				.param("responseBody", body)
-				.param("retainUntil", Timestamp.from(retainUntil))
-				.param("now", Timestamp.from(now))
+				.param("retainUntil", instant(retainUntil))
+				.param("now", instant(now))
 				.update();
 		return rows == 1;
 	}
@@ -150,10 +151,10 @@ public class OperationRepository {
 				  AND status = 'IN_PROGRESS'
 				  AND owner_token = :ownerToken
 				""")
-				.param("id", id)
+				.param("id", id.toString())
 				.param("ownerToken", ownerToken)
-				.param("leaseExpiresAt", Timestamp.from(leaseExpiresAt))
-				.param("now", Timestamp.from(now))
+				.param("leaseExpiresAt", instant(leaseExpiresAt))
+				.param("now", instant(now))
 				.update();
 		return rows == 1;
 	}
@@ -200,10 +201,10 @@ public class OperationRepository {
 		if (q.q() != null && !q.q().isBlank()) {
 			sql.append("""
 					 AND (
-					   idempotency_key ILIKE :qLike
-					   OR COALESCE(request_path, '') ILIKE :qLike
-					   OR CAST(id AS text) ILIKE :qLike
-					   OR COALESCE(business_key, '') ILIKE :qLike
+					   idempotency_key LIKE :qLike COLLATE NOCASE
+					   OR COALESCE(request_path, '') LIKE :qLike COLLATE NOCASE
+					   OR id LIKE :qLike COLLATE NOCASE
+					   OR COALESCE(business_key, '') LIKE :qLike COLLATE NOCASE
 					 )
 					""");
 		}
@@ -236,13 +237,13 @@ public class OperationRepository {
 			spec = spec.param("qLike", "%" + q.q().trim() + "%");
 		}
 		if (q.operationId() != null) {
-			spec = spec.param("operationId", q.operationId());
+			spec = spec.param("operationId", q.operationId().toString());
 		}
 		if (q.from() != null) {
-			spec = spec.param("fromTs", Timestamp.from(q.from()));
+			spec = spec.param("fromTs", instant(q.from()));
 		}
 		if (q.to() != null) {
-			spec = spec.param("toTs", Timestamp.from(q.to()));
+			spec = spec.param("toTs", instant(q.to()));
 		}
 		return spec;
 	}
@@ -255,14 +256,13 @@ public class OperationRepository {
 
 	public int deleteExpired(Instant now) {
 		return jdbc.sql("DELETE FROM operations WHERE retain_until < :now")
-				.param("now", Timestamp.from(now))
+				.param("now", instant(now))
 				.update();
 	}
 
 	private Operation mapRow(ResultSet rs, int rowNum) throws SQLException {
-		Timestamp lease = rs.getTimestamp("lease_expires_at");
 		return new Operation(
-				rs.getObject("id", UUID.class),
+				UUID.fromString(rs.getString("id")),
 				rs.getString("scope"),
 				rs.getString("idempotency_key"),
 				rs.getString("fingerprint"),
@@ -273,13 +273,21 @@ public class OperationRepository {
 				parseHeaders(rs.getString("response_headers")),
 				rs.getString("response_body"),
 				rs.getString("owner_token"),
-				lease != null ? lease.toInstant() : null,
+				parseInstant(rs.getString("lease_expires_at")),
 				rs.getString("business_key"),
-				rs.getTimestamp("expires_at").toInstant(),
-				rs.getTimestamp("retain_until").toInstant(),
-				rs.getTimestamp("created_at").toInstant(),
-				rs.getTimestamp("updated_at").toInstant(),
-				rs.getTimestamp("completed_at") != null ? rs.getTimestamp("completed_at").toInstant() : null);
+				parseInstant(rs.getString("expires_at")),
+				parseInstant(rs.getString("retain_until")),
+				parseInstant(rs.getString("created_at")),
+				parseInstant(rs.getString("updated_at")),
+				parseInstant(rs.getString("completed_at")));
+	}
+
+	private static String instant(Instant value) {
+		return value != null ? value.toString() : null;
+	}
+
+	private static Instant parseInstant(String value) {
+		return value != null && !value.isBlank() ? Instant.parse(value) : null;
 	}
 
 	private Map<String, String> parseHeaders(String json) {

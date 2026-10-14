@@ -14,10 +14,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.example.idemgate.SupportPostgres;
+import com.example.idemgate.config.SqliteTestConfig;
 
 @SpringBootTest
-class ConcurrentClaimTest extends SupportPostgres {
+class ConcurrentClaimTest extends SqliteTestConfig {
 
 	private static final String FP = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
 

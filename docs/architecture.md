@@ -4,11 +4,11 @@ Monorepo layout:
 
 ```
 idemgate/
-  server/                 # HTTP API + PostgreSQL registry
+  server/                          # HTTP API + SQLite registry
   idemgate-client/                 # Java SDK
   idemgate-spring-boot-starter/    # @Idempotent integration
-  samples/demo-app/       # example consumer
-  ui/                     # Landing + integrate guide + dashboard (Vercel Root = ui)
+  samples/demo-app/                # example consumer
+  web/                             # Ops console (embedded at /ui)
   docs/
 ```
 
@@ -17,8 +17,8 @@ flowchart LR
   DemoApp --> Starter
   Starter --> Client
   Client --> Server
-  Server --> Postgres
-  Dashboard["ui/"] --> AdminAPI["/v1/admin/**"]
+  Server --> SQLite["SQLite file"]
+  Dashboard["web/ → /ui"] --> AdminAPI["/v1/admin/**"]
   AdminAPI --> Server
 ```
 

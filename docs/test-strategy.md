@@ -9,7 +9,7 @@
 
 ## Integration tests
 
-- Spring Boot + embedded PostgreSQL (`io.zonky.test:embedded-postgres`)
+- Spring Boot + file-backed SQLite (`SqliteTestConfig`, temp DB file)
 - Claim → complete → claim again (replay)
 - Claim → second claim while `IN_PROGRESS`
 - GET by id and by scope+key

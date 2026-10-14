@@ -2,9 +2,11 @@ spring:
   application:
     name: idemgate
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/idemgate}
-    username: ${SPRING_DATASOURCE_USERNAME:idemgate}
-    password: ${SPRING_DATASOURCE_PASSWORD:idemgate}
+    url: ${SPRING_DATASOURCE_URL:jdbc:sqlite:${IDEMGATE_DB_PATH:./data/idemgate.db}}
+    driver-class-name: org.sqlite.JDBC
+    hikari:
+      maximum-pool-size: 1
+      connection-init-sql: "PRAGMA busy_timeout = 5000"
   flyway:
     enabled: true
 

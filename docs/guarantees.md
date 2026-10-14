@@ -20,7 +20,7 @@ IdemGate coordinates idempotent execution. It does **not** run business logic or
 | Exactly-once delivery to external systems | Side effects (payments, emails, queues) remain the caller's responsibility. |
 | Business transaction / outbox replacement | IdemGate sits beside your write path; it does not wrap it. |
 | Unlimited payload storage | Response bodies are size-capped; request bodies are not stored—only a client-supplied fingerprint hash. |
-| Cross-instance in-memory state | All coordination is in PostgreSQL so multiple replicas stay consistent. |
+| Cross-instance in-memory state | All coordination is in the SQLite registry file (single-writer; not multi-replica). |
 
 ## State machine
 
@@ -34,4 +34,4 @@ IN_PROGRESS ──► COMPLETED
 
 - **IN_PROGRESS** — claim won; caller should execute work then complete.
 - **COMPLETED** / **FAILED** — terminal; response snapshot is replayed.
-- **UNKNOWN** — caller explicitly marks an uncertain outcome (e.g. crash after side effect). Q1 exposes the state; lease-based recovery is planned for Q2.
+- **UNKNOWN** — caller explicitly marks an uncertain outcome (e.g. crash after side effect). Lease reclaim covers expired `IN_PROGRESS`; richer reconciliation is Phase 2 ([roadmap.md](roadmap.md)).
