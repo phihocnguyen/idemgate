@@ -1,7 +1,9 @@
 .git
-.idea
-*.iml
-target
+.cursor
+**/target
+**/node_modules
+ui
 docs
+scripts
 *.md
-.mvn/wrapper/maven-wrapper.jar
+.githooks

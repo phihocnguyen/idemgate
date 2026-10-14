@@ -16,7 +16,9 @@ services:
       retries: 10
 
   idemgate:
-    build: .
+    build:
+      context: .
+      dockerfile: server/Dockerfile
     ports:
       - "8080:8080"
     environment:
@@ -27,6 +29,9 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+
+  # Future: ui service or deploy ui/ to Vercel separately.
+  # demo-app can run locally against idemgate:8080.
 
 volumes:
   idemgate_pg:
