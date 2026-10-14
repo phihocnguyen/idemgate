@@ -5,8 +5,8 @@ Monorepo layout:
 ```
 idemgate/
   server/                 # HTTP API + PostgreSQL registry
-  client/                 # Java SDK
-  spring-boot-starter/    # @Idempotent integration
+  idemgate-client/                 # Java SDK
+  idemgate-spring-boot-starter/    # @Idempotent integration
   samples/demo-app/       # example consumer
   ui/                     # future frontend (Vercel Root Directory = ui)
   docs/

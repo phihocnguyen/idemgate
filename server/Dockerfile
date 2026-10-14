@@ -7,8 +7,8 @@ WORKDIR /workspace
 COPY mvnw pom.xml ./
 COPY .mvn .mvn
 COPY server server
-COPY client client
-COPY spring-boot-starter spring-boot-starter
+COPY idemgate-client idemgate-client
+COPY idemgate-spring-boot-starter idemgate-spring-boot-starter
 COPY samples samples
 RUN chmod +x mvnw && ./mvnw -q -pl server -am -DskipTests package
 

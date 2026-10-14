@@ -7,8 +7,8 @@ Idempotency registry + Java SDK + Spring Boot starter (monorepo).
 | Path | Role |
 |------|------|
 | [`server/`](server/) | PostgreSQL-backed claim/complete/lease API |
-| [`client/`](client/) | Java HTTP SDK |
-| [`spring-boot-starter/`](spring-boot-starter/) | `@Idempotent` + `Idempotency-Key` |
+| [`idemgate-client/`](idemgate-client/) | Java HTTP SDK |
+| [`idemgate-spring-boot-starter/`](idemgate-spring-boot-starter/) | `@Idempotent` + `Idempotency-Key` |
 | [`samples/demo-app/`](samples/demo-app/) | Payment + webhook sample |
 | [`ui/`](ui/) | Future frontend (deploy Root Directory `ui` on Vercel) |
 
