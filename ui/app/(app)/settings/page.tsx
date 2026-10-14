@@ -12,9 +12,9 @@ export default async function SettingsPage() {
 
   return (
     <>
-      <h1>Settings</h1>
-      <p className="muted">Runtime knobs exposed by the IdemGate admin API.</p>
-      {error && <p className="error">Failed to load settings: {error}</p>}
+      <h1 className="text-2xl font-semibold tracking-tight">Settings</h1>
+      <p className="mt-1 text-app-muted">Runtime knobs exposed by the IdemGate admin API.</p>
+      {error && <p className="my-4 text-app-bad">Failed to load settings: {error}</p>}
       {settings && <SettingsForm initial={settings} />}
     </>
   );
