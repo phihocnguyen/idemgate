@@ -1,0 +1,39 @@
+spring:
+  application:
+    name: idemgate
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/idemgate}
+    username: ${SPRING_DATASOURCE_USERNAME:idemgate}
+    password: ${SPRING_DATASOURCE_PASSWORD:idemgate}
+  flyway:
+    enabled: true
+
+server:
+  port: ${SERVER_PORT:8080}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: when_authorized
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
+
+idemgate:
+  api-key: ${IDEMGATE_API_KEY:dev-secret-change-me}
+  default-ttl-seconds: ${IDEMGATE_DEFAULT_TTL_SECONDS:300}
+  retention-days: ${IDEMGATE_RETENTION_DAYS:7}
+  max-response-body-bytes: ${IDEMGATE_MAX_RESPONSE_BODY_BYTES:65536}
+  cleanup-interval-ms: ${IDEMGATE_CLEANUP_INTERVAL_MS:60000}
+
+logging:
+  level:
+    com.example.idemgate: INFO
