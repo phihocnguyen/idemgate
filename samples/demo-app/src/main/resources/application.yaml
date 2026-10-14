@@ -1,0 +1,13 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: idemgate-demo-app
+
+idemgate:
+  client:
+    base-url: ${IDEMGATE_BASE_URL:http://localhost:8080}
+    api-key: ${IDEMGATE_API_KEY:dev-secret-change-me}
+    default-scope: payments
+    fail-closed: true
