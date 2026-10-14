@@ -1,20 +1,25 @@
-# IdemGate UI
+# IdemGate Dashboard
 
-Placeholder for the future dashboard / marketing site.
+Next.js admin UI for the IdemGate registry (Month 7).
 
-## Deploy on Vercel
-
-1. Create a Vercel project from this Git repo.
-2. Set **Root Directory** to `ui`.
-3. Use your framework build (`npm run build` / Next.js defaults).
-4. Point API calls at the IdemGate server via env (e.g. `NEXT_PUBLIC_IDEMGATE_URL`).
-
-Do **not** build Java modules on Vercel. The server runs elsewhere (Docker / VM / PaaS).
-
-## Local (later)
+## Setup
 
 ```bash
-cd ui
+cp .env.example .env.local
 npm install
 npm run dev
 ```
+
+Open http://localhost:3000. The UI calls the server admin API at
+`NEXT_PUBLIC_IDEMGATE_URL` with `X-Api-Key: NEXT_PUBLIC_IDEMGATE_API_KEY`.
+
+## Pages
+
+- `/` — operations list with status / scope / key / businessKey / free-text filters
+- `/operations/[id]` — operation detail (response body redacted unless server exposes it)
+- `/settings` — runtime settings (TTL, lease, retention, body exposure)
+
+## Vercel
+
+Set **Root Directory** to `ui` and configure the same env vars in the project settings.
+The API host must allow CORS from your Vercel origin (dev already allows `localhost:3000`).
